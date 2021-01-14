@@ -44,7 +44,7 @@ export class PodcastsService {
         podcasts,
       };
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return this.InternalServerErrorOutput;
     }
   }
@@ -129,45 +129,35 @@ export class PodcastsService {
   }
 
   async getEpisodes(podcastId: number): Promise<EpisodesOutput> {
-    try {
-      const { podcast, ok, error } = await this.getPodcast(podcastId);
-      if (!ok) {
-        return { ok, error };
-      }
-      return {
-        ok: true,
-        episodes: podcast.episodes,
-      };
-    } catch (e) {
-      console.log(e);
-      return this.InternalServerErrorOutput;
+    const { podcast, ok, error } = await this.getPodcast(podcastId);
+    if (!ok) {
+      return { ok, error };
     }
+    return {
+      ok: true,
+      episodes: podcast.episodes,
+    };
   }
 
   async getEpisode({
     podcastId,
     episodeId,
   }: EpisodesSearchInput): Promise<GetEpisodeOutput> {
-    try {
-      const { episodes, ok, error } = await this.getEpisodes(podcastId);
-      if (!ok) {
-        return { ok, error };
-      }
-      const episode = episodes.find(episode => episode.id === episodeId);
-      if (!episode) {
-        return {
-          ok: false,
-          error: `Episode with id ${episodeId} not found in podcast with id ${podcastId}`,
-        };
-      }
-      return {
-        ok: true,
-        episode,
-      };
-    } catch (e) {
-      console.log(e);
-      return this.InternalServerErrorOutput;
+    const { episodes, ok, error } = await this.getEpisodes(podcastId);
+    if (!ok) {
+      return { ok, error };
     }
+    const episode = episodes.find(episode => episode.id === episodeId);
+    if (!episode) {
+      return {
+        ok: false,
+        error: `Episode with id ${episodeId} not found in podcast with id ${podcastId}`,
+      };
+    }
+    return {
+      ok: true,
+      episode,
+    };
   }
 
   async createEpisode({
